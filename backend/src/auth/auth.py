@@ -1,16 +1,14 @@
 import json
-from flask import request, _request_ctx_stack, Flask
+from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
-
-app = Flask(__name__)
 
 AUTH0_DOMAIN = 'enactus-ma.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'coffee_shop'
 
-## AuthError Exception
+# AuthError Exception
 '''
 AuthError Exception
 A standardized way to communicate auth failure modes
@@ -188,8 +186,8 @@ def requires_auth(permission=''):
     return requires_auth_decorator
 
 
-@app.route('/drinks')
+"""@app.route('/drinks')
 @requires_auth('get:drinks')
 def drinks(jwt):
     print(jwt)
-    return 'Access Granted'
+    return 'Access Granted'"""

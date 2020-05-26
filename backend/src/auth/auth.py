@@ -184,10 +184,3 @@ def requires_auth(permission=''):
 
         return wrapper
     return requires_auth_decorator
-
-
-"""@app.route('/drinks')
-@requires_auth('get:drinks')
-def drinks(jwt):
-    print(jwt)
-    return 'Access Granted'"""

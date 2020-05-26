@@ -48,7 +48,7 @@ def get_token_auth_header():
         }, 401)
 
     parts = authorized.split()
-    if parts[0].lower != 'bearer':
+    if parts[0].lower() != 'bearer':
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization header must start with "Bearer".'
@@ -68,7 +68,6 @@ def get_token_auth_header():
 
     token = parts[1]
     return token
-
 
 '''
 @TODO implement check_permissions(permission, payload) method

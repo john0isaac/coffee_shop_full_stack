@@ -125,12 +125,12 @@ def edit_drink(jwt, id):
         drink.title = req_title
         drink.recipe = req_recipe
         drink.update()
-
-        drink = drink.long()
+        drinks = []
+        drinks.append(drink.long())
 
         return jsonify({
                 'success': True,
-                'drinks': drink
+                'drinks': drinks
             }), 200
     except:
         abort(422)

@@ -45,7 +45,7 @@ def retrive_drinks():
                 'drinks': drinks
         }), 200
     except:
-        abort (405)
+        abort(405)
 
 
 '''
@@ -133,7 +133,7 @@ def edit_drink(jwt, id):
                 'drinks': drink
             }), 200
     except:
-        abort(400)
+        abort(422)
 
 
 '''

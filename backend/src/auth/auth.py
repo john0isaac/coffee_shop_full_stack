@@ -64,8 +64,7 @@ def get_token_auth_header():
             'description': 'Authorization header must be bearer token.'
         }, 401)
 
-    token = parts[1]
-    return token
+    return parts[1]
 
 '''
 @TODO:DONE implement check_permissions(permission, payload) method

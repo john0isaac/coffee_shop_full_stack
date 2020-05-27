@@ -11,12 +11,19 @@ app = Flask(__name__)
 setup_db(app)
 CORS(app)
 
+# CORS Headers
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS')
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:8100')
+    return response
 '''
 @TODO uncomment the following line to initialize the datbase
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-# db_drop_and_create_all()
+#db_drop_and_create_all()
 
 ## ROUTES
 '''
@@ -27,17 +34,18 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
-@app.route('/drinks', methods=['GET'])
-def retrive_drinks_short():
+@app.route('/drinks')
+def retrive_drinks():
     try:
-        selection = Drink.query.order_by(Drink.id).all()
+        selection = Drink.query.all()
         drinks = [drink.short() for drink in selection]
+
         return jsonify({
-            'success': True,
-            'drinks': drinks
-        })
+                'success': True,
+                'drinks': drinks
+        }), 200
     except:
-        abort(405)
+        abort (405)
 
 
 '''
@@ -48,22 +56,23 @@ def retrive_drinks_short():
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
-@app.route('/drinks-detail', methods=['GET'])
+@app.route('/drinks-detail')
 @requires_auth('get:drinks-detail')
-def retrive_drinks_long():
+def retrive_drinks_details(jwt):
     try:
-        selection = Drink.query.order_by(Drink.id).all()
+        selection = Drink.query.all()
         drinks = [drink.long() for drink in selection]
+
         return jsonify({
-            'success': True,
-            'drinks': drinks
-        })
+                'success': True,
+                'drinks': drinks
+        }), 200
     except:
         abort(405)
 
 
 '''
-@TODO implement endpoint
+@TODO:DONE implement endpoint
     POST /drinks
         it should create a new row in the drinks table
         it should require the 'post:drinks' permission
@@ -71,8 +80,24 @@ def retrive_drinks_long():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', methods=['POST'])
+@requires_auth('post:drinks')
+def add_drink(jwt):
+    body = request.get_json()
+    try:
+        req_title = body.get('title', None)
+        req_recipe = json.dumps(body.get('recipe', None))
+        drink = Drink(title=req_title, recipe=req_recipe)
+        drink.insert()
 
+        drink = drink.long()
 
+        return jsonify({
+                'success': True,
+                'drinks': drink
+            })
+    except:
+        abort(422)
 '''
 @TODO implement endpoint
     PATCH /drinks/<id>

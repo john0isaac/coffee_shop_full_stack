@@ -147,21 +147,18 @@ def edit_drink(jwt, id):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:id>', methods=['DELETE'])
-@requires_auth('delte:drinks')
+@requires_auth('delete:drinks')
 def delete_drink(jwt, id):
-    drink = Drink.query.filter(Drink.id == id).one_or_none()
+    drink = Drink.query.get(id)
+    if drink:
+        drink.delete()
 
-    if not drink:
-        abort(404)
-
-    try:
-        drink.delte()
         return jsonify({
-                'success': True,
-                'delete': id
-            }), 200
-    except:
-        abort(422)
+            'success': True,
+            'delete': id
+        }), 200
+    else:
+        abort(404)
 
 # Error Handling : DONE
 '''

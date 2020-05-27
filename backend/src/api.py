@@ -95,11 +95,13 @@ def add_drink(jwt):
         return jsonify({
                 'success': True,
                 'drinks': drink
-            })
+            }), 200
     except:
         abort(422)
+
+
 '''
-@TODO implement endpoint
+@TODO:DONE implement endpoint
     PATCH /drinks/<id>
         where <id> is the existing model id
         it should respond with a 404 error if <id> is not found
@@ -109,10 +111,33 @@ def add_drink(jwt):
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:id>', methods=['PATCH'])
+@requires_auth('patch:drinks')
+def edit_drink(jwt, id):
+    body = request.get_json()
+    drink = Drink.query.filter(Drink.id == id).one_or_none()
+
+    if not drink:
+        abort(404)
+    try:
+        req_title = body.get('title', None)
+        req_recipe = json.dumps(body.get('recipe', None))
+        drink.title = req_title
+        drink.recipe = req_recipe
+        drink.update()
+
+        drink = drink.long()
+
+        return jsonify({
+                'success': True,
+                'drinks': drink
+            }), 200
+    except:
+        abort(400)
 
 
 '''
-@TODO implement endpoint
+@TODO:DONE implement endpoint
     DELETE /drinks/<id>
         where <id> is the existing model id
         it should respond with a 404 error if <id> is not found
@@ -121,7 +146,22 @@ def add_drink(jwt):
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:id>', methods=['DELETE'])
+@requires_auth('delte:drinks')
+def delete_drink(jwt, id):
+    drink = Drink.query.filter(Drink.id == id).one_or_none()
 
+    if not drink:
+        abort(404)
+
+    try:
+        drink.delte()
+        return jsonify({
+                'success': True,
+                'delete': id
+            }), 200
+    except:
+        abort(422)
 
 # Error Handling : DONE
 '''
